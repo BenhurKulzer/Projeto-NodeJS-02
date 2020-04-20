@@ -14,15 +14,18 @@ class TransactionsRepository extends Repository<Transaction> {
     // TODO
     const transactions = await this.find();
 
-    const balance = transactions.reduce(
+    const { income, outcome } = transactions.reduce(
       (accumulator, transactions) => {
         switch (transactions.type) {
           case 'income':
-            accumulator.income += transactions.value;
+            accumulator.income += Number(transactions.value);
             break;
 
           case 'outcome':
-            accumulator.outcome += transactions.value;
+            accumulator.outcome += Number(transactions.value);
+            break;
+
+          default:
             break;
         }
 
@@ -34,6 +37,10 @@ class TransactionsRepository extends Repository<Transaction> {
         total: 0,
       },
     );
+
+    const total = income - outcome;
+
+    return { income, outcome, total };
   }
 }
 
